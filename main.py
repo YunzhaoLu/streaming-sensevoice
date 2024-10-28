@@ -27,7 +27,7 @@ def main():
     step = int(0.1 * sr)
     for i in range(0, len(samples), step):
         is_last = i + step >= len(samples)
-        for res in model.streaming_inference(samples[i : i + step], is_last):
+        for res in model.streaming_inference(samples[i : i + step], is_last, language='yue'):
             print(res["timestamps"])
             print(res["text"])
 
