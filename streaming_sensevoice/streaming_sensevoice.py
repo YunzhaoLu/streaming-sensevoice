@@ -84,7 +84,7 @@ class StreamingSenseVoice:
             return 0
         return effective_size % self.chunk_size or self.chunk_size
 
-    def inference(self, speech):
+    def inference(self, speech, language='yue'):
         speech = speech[None, :, :]
         speech_lengths = torch.tensor([speech.shape[1]])
         speech = speech.to(self.device)
@@ -94,7 +94,7 @@ class StreamingSenseVoice:
             torch.LongTensor([[self.model.textnorm_dict["woitn"]]]).to(self.device)
         ).repeat(speech.size(0), 1, 1)
         language_query = self.model.embed(
-            torch.LongTensor([[self.model.lid_dict["zh"]]]).to(self.device)
+            torch.LongTensor([[self.model.lid_dict[language]]]).to(self.device)
         ).repeat(speech.size(0), 1, 1)
         event_emo_query = self.model.embed(
             torch.LongTensor([[1, 2]]).to(self.device)
@@ -127,7 +127,7 @@ class StreamingSenseVoice:
             cur_size = self.get_size()
             if cur_size != self.chunk_size and not is_last:
                 continue
-            probs = self.inference(self.caches)[self.padding :]
+            probs = self.inference(self.caches, language=language)[self.padding :]
             if cur_size != self.chunk_size:
                 probs = probs[self.chunk_size - cur_size :]
             if not is_last:
