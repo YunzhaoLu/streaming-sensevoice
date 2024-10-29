@@ -115,7 +115,7 @@ class StreamingSenseVoice:
             times_ms.append(step * 60)
         return times_ms, self.tokenizer.decode(tokens)
 
-    def streaming_inference(self, audio, is_last):
+    def streaming_inference(self, audio, is_last, language=language):
         self.fbank.accept_waveform(audio, is_last)
         features = self.fbank.get_lfr_frames(
             neg_mean=self.neg_mean, inv_stddev=self.inv_stddev
